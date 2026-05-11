@@ -40,3 +40,8 @@ while True:
     if not alive:
         print("BOOM! Game Over")
         break
+
+    if game.check_win():
+        game.display_board()
+        print("YOU WIN!")
+        break

@@ -135,3 +135,20 @@ class Board:
             nc = col + dc
 
             self.dfs_reveal(nr, nc)
+
+    def check_win(self):
+        """
+        Check if the player has won.
+        """
+
+        revealed_cells = 0
+
+        for r in range(self.rows):
+            for c in range(self.cols):
+
+                if self.visible[r][c]:
+                    revealed_cells += 1
+
+        total_safe_cells = (self.rows * self.cols) - self.mines
+
+        return revealed_cells == total_safe_cells
