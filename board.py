@@ -97,9 +97,41 @@ class Board:
         Reveal a cell on the board.
         """
 
-        self.visible[row][col] = True
-
         if self.board[row][col] == MINE:
+            self.visible[row][col] = True
             return False
 
+        self.dfs_reveal(row, col)
+
         return True
+
+    def dfs_reveal(self, row, col):
+        """
+        Reveal neighboring empty cells using DFS.
+        """
+
+        if row < 0 or row >= self.rows:
+            return
+
+        if col < 0 or col >= self.cols:
+            return
+
+        if self.visible[row][col]:
+            return
+
+        self.visible[row][col] = True
+
+        if self.board[row][col] != 0:
+            return
+
+        directions = [
+            (-1, -1), (-1, 0), (-1, 1),
+            (0, -1), (0, 1),
+            (1, -1), (1, 0), (1, 1)
+        ]
+
+        for dr, dc in directions:
+            nr = row + dr
+            nc = col + dc
+
+            self.dfs_reveal(nr, nc)
