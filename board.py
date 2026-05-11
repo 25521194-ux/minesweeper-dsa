@@ -25,6 +25,7 @@ class Board:
         self.board = [[0 for _ in range(cols)] for _ in range(rows)]
         self.visible = [[False for _ in range(cols)] for _ in range(rows)]
         self.flags = [[False for _ in range(cols)] for _ in range(rows)]
+        self.first_move = True
 
         self.place_mines()
         self.calculate_numbers()
@@ -52,6 +53,12 @@ class Board:
             (0, -1),           (0, 1),
             (1, -1),  (1, 0),  (1, 1)
         ]
+
+        for r in range(self.rows):
+            for c in range(self.cols):
+
+                if self.board[r][c] != MINE:
+                    self.board[r][c] = 0
 
         for r in range(self.rows):
             for c in range(self.cols):
@@ -97,6 +104,13 @@ class Board:
             print(" ".join(row))
 
     def reveal_cell(self, row, col):
+        if self.first_move:
+
+            self.first_move = False
+
+            if self.board[row][col] == MINE:
+                self.move_mine(row, col)
+                
         if self.flags[row][col]:
             return True
         """
@@ -166,3 +180,19 @@ class Board:
 
         if not self.visible[row][col]:
             self.flags[row][col] = not self.flags[row][col]
+
+    def move_mine(self, row, col):
+        """
+        Move a mine to another position.
+        """
+
+        for r in range(self.rows):
+            for c in range(self.cols):
+
+                if self.board[r][c] != MINE:
+                    self.board[r][c] = MINE
+                    self.board[row][col] = 0
+
+                    self.calculate_numbers()
+
+                    return
