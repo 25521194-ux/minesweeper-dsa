@@ -24,6 +24,7 @@ class Board:
 
         self.board = [[0 for _ in range(cols)] for _ in range(rows)]
         self.visible = [[False for _ in range(cols)] for _ in range(rows)]
+        self.flags = [[False for _ in range(cols)] for _ in range(rows)]
 
         self.place_mines()
         self.calculate_numbers()
@@ -80,7 +81,10 @@ class Board:
 
             for c in range(self.cols):
 
-                if self.visible[r][c]:
+                if self.flags[r][c]:
+                    row.append("F")
+
+                elif self.visible[r][c]:
 
                     if self.board[r][c] == MINE:
                         row.append("*")
@@ -93,6 +97,8 @@ class Board:
             print(" ".join(row))
 
     def reveal_cell(self, row, col):
+        if self.flags[row][col]:
+            return True
         """
         Reveal a cell on the board.
         """
@@ -152,3 +158,11 @@ class Board:
         total_safe_cells = (self.rows * self.cols) - self.mines
 
         return revealed_cells == total_safe_cells
+
+    def toggle_flag(self, row, col):
+        """
+        Place or remove a flag.
+        """
+
+        if not self.visible[row][col]:
+            self.flags[row][col] = not self.flags[row][col]

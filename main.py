@@ -32,16 +32,24 @@ while True:
 
     game.display_board()
 
+    action = input("Reveal or Flag? (r/f): ")
+
     row = int(input("Enter row: "))
     col = int(input("Enter col: "))
 
-    alive = game.reveal_cell(row, col)
+    if action == "f":
+        game.toggle_flag(row, col)
 
-    if not alive:
-        print("BOOM! Game Over")
-        break
+    elif action == "r":
 
-    if game.check_win():
-        game.display_board()
-        print("YOU WIN!")
-        break
+        alive = game.reveal_cell(row, col)
+
+        if not alive:
+            game.display_board()
+            print("BOOM! Game Over")
+            break
+
+        if game.check_win():
+            game.display_board()
+            print("YOU WIN!")
+            break
