@@ -91,3 +91,15 @@ class Board:
                     row.append("#")
 
             print(" ".join(row))
+
+    def reveal_cell(self, row, col):
+        """
+        Reveal a cell on the board.
+        """
+
+        self.visible[row][col] = True
+
+        if self.board[row][col] == MINE:
+            return False
+
+        return True
