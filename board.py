@@ -110,7 +110,7 @@ class Board:
 
             if self.board[row][col] == MINE:
                 self.move_mine(row, col)
-                
+
         if self.flags[row][col]:
             return True
         """
@@ -196,3 +196,25 @@ class Board:
                     self.calculate_numbers()
 
                     return
+
+    def reveal_all_mines(self):
+        """
+        Reveal all mines on the board.
+        """
+
+        for r in range(self.rows):
+            for c in range(self.cols):
+
+                if self.board[r][c] == MINE:
+                    self.visible[r][c] = True
+
+    def reveal_all_mines(self):
+        """
+        Reveal all mines on the board.
+        """
+
+        for r in range(self.rows):
+            for c in range(self.cols):
+
+                if self.board[r][c] == MINE:
+                    self.visible[r][c] = True

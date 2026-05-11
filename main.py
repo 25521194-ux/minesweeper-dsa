@@ -45,6 +45,7 @@ while True:
         alive = game.reveal_cell(row, col)
 
         if not alive:
+            game.reveal_all_mines()
             game.display_board()
             print("BOOM! Game Over")
             break
