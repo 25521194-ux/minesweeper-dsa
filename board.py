@@ -23,6 +23,7 @@ class Board:
         self.mines = mines
 
         self.board = [[0 for _ in range(cols)] for _ in range(rows)]
+        self.visible = [[False for _ in range(cols)] for _ in range(rows)]
 
         self.place_mines()
         self.calculate_numbers()
@@ -68,3 +69,25 @@ class Board:
                             count += 1
 
                 self.board[r][c] = count
+
+    def display_board(self):
+        """
+        Display the visible board to the player.
+        """
+
+        for r in range(self.rows):
+            row = []
+
+            for c in range(self.cols):
+
+                if self.visible[r][c]:
+
+                    if self.board[r][c] == MINE:
+                        row.append("*")
+                    else:
+                        row.append(str(self.board[r][c]))
+
+                else:
+                    row.append("#")
+
+            print(" ".join(row))
