@@ -182,20 +182,25 @@ class Board:
             self.flags[row][col] = not self.flags[row][col]
 
     def move_mine(self, row, col):
-        """
-        Move a mine to another position.
-        """
+    """
+    Move a mine to a random safe position.
+    """
 
-        for r in range(self.rows):
-            for c in range(self.cols):
+    while True:
+        r = random.randint(0, self.rows - 1)
+        c = random.randint(0, self.cols - 1)
 
-                if self.board[r][c] != MINE:
-                    self.board[r][c] = MINE
-                    self.board[row][col] = 0
+        # Find a safe cell that is not the clicked cell
+        if self.board[r][c] != MINE and (r, c) != (row, col):
 
-                    self.calculate_numbers()
+            # Move mine
+            self.board[r][c] = MINE
+            self.board[row][col] = 0
 
-                    return
+            # Recalculate numbers
+            self.calculate_numbers()
+
+            return
 
     def reveal_all_mines(self):
         """
