@@ -32,10 +32,15 @@ elif difficulty == "advanced":
 
 CELL_SIZE = WIDTH // COLS
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode(
+    (WIDTH, HEIGHT),
+    pygame.RESIZABLE
+)
 pygame.display.set_caption("Minesweeper")
 
-font = pygame.font.SysFont("Segoe UI Emoji", 32)
+FONT_SIZE = max(16, CELL_SIZE // 2)
+
+font = pygame.font.SysFont("Segoe UI Emoji", FONT_SIZE)
 
 # SOUND EFFECTS
 click_sound = pygame.mixer.Sound("assets/click.mp3")
@@ -53,7 +58,17 @@ NUMBER_COLORS = {
     8: (100, 100, 100)
 }
 
+def update_sizes():
+    global CELL_SIZE, FONT_SIZE, font
+
+    CELL_SIZE = min(WIDTH // COLS, HEIGHT // ROWS)
+
+    FONT_SIZE = max(16, CELL_SIZE // 2)
+
+    font = pygame.font.SysFont("Segoe UI Emoji", FONT_SIZE)
+
 game = Board(ROWS, COLS, MINES)
+update_sizes()
 
 running = True
 game_over = False
@@ -72,16 +87,25 @@ def restart_game():
     game_over = False
     victory = False
 
-
 while running:
 
     screen.fill((50, 50, 60))
+    board_w = game.cols * CELL_SIZE
+    board_h = game.rows * CELL_SIZE
+    offset_x = (WIDTH - board_w) // 2
+    offset_y = (HEIGHT - board_h) // 2
 
     # EVENTS
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT:
             running = False
+
+        if event.type == pygame.VIDEORESIZE:
+            WIDTH, HEIGHT = event.w, event.h
+            screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+
+            update_sizes()
 
         # KEYBOARD EVENTS
         if event.type == pygame.KEYDOWN:
@@ -100,8 +124,12 @@ while running:
                 MINES = 10
 
                 CELL_SIZE = WIDTH // COLS
+                FONT_SIZE = max(16, CELL_SIZE // 2)
+                font = pygame.font.SysFont("Segoe UI Emoji", FONT_SIZE)
 
+                update_sizes()
                 restart_game()
+                continue
 
             # INTERMEDIATE
             elif event.key == pygame.K_2:
@@ -113,8 +141,12 @@ while running:
                 MINES = 40
 
                 CELL_SIZE = WIDTH // COLS
+                FONT_SIZE = max(16, CELL_SIZE // 2)
+                font = pygame.font.SysFont("Segoe UI Emoji", FONT_SIZE)
 
+                update_sizes()
                 restart_game()
+                continue
 
             # ADVANCED
             elif event.key == pygame.K_3:
@@ -126,19 +158,24 @@ while running:
                 MINES = 99
 
                 CELL_SIZE = WIDTH // COLS
+                FONT_SIZE = max(16, CELL_SIZE // 2)
+                font = pygame.font.SysFont("Segoe UI "
+                                           "Emoji", FONT_SIZE)
 
+                update_sizes()
                 restart_game()
+                continue
 
         # MOUSE CLICK
         if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
 
             x, y = pygame.mouse.get_pos()
 
-            row = y // CELL_SIZE
-            col = x // CELL_SIZE
+            row = (y - offset_y) // CELL_SIZE
+            col = (x - offset_x) // CELL_SIZE
 
             # PREVENT OUT OF BOUNDS
-            if row >= ROWS or col >= COLS:
+            if row < 0 or col < 0 or row >= game.rows or col >= game.cols:
                 continue
 
             # LEFT CLICK = reveal
@@ -168,12 +205,11 @@ while running:
                 game.toggle_flag(row, col)
 
     # DRAW BOARD
-    for r in range(ROWS):
-        for c in range(COLS):
-
+    for r in range(game.rows):
+        for c in range(game.cols):
             rect = pygame.Rect(
-                c * CELL_SIZE,
-                r * CELL_SIZE,
+                c * CELL_SIZE + offset_x,
+                r * CELL_SIZE + offset_y,
                 CELL_SIZE,
                 CELL_SIZE
             )
@@ -196,8 +232,8 @@ while running:
                 screen.blit(
                     text,
                     (
-                        c * CELL_SIZE + CELL_SIZE // 3,
-                        r * CELL_SIZE + CELL_SIZE // 4
+                            c * CELL_SIZE + offset_x + CELL_SIZE // 3,
+                            r * CELL_SIZE + offset_y + CELL_SIZE // 4
                     )
                 )
 
@@ -225,8 +261,8 @@ while running:
                 screen.blit(
                     text,
                     (
-                        c * CELL_SIZE + CELL_SIZE // 3,
-                        r * CELL_SIZE + CELL_SIZE // 4
+                        c * CELL_SIZE + offset_x + CELL_SIZE // 3,
+                        r * CELL_SIZE + offset_y + CELL_SIZE // 4
                     )
                 )
 
@@ -304,7 +340,7 @@ while running:
         (255, 255, 255)
     )
 
-    screen.blit(instruction, (10, HEIGHT - 30))
+    screen.blit(instruction, (10, HEIGHT - 40))
 
     pygame.display.flip()
 
